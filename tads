@@ -1,0 +1,363 @@
+/* ////////////////////////////////////////////////////    PUNTO   1    /////////////////////////////////////////////*/
+
+procedure concatpoint(in/out l1: List of T, in l2 : List Of T)
+var q : pointer to (Node of T)
+var p : pointer to (Node of T)
+alloc(q)
+alloc(p)
+q := l2
+p := l1
+if(not is_empty(l1)) then
+    do (p -> next != null)
+        p:= p -> next
+    od
+    p -> next := q
+else 
+    l1 := q
+fi
+end procedure
+
+procedure concat (in/out l:List of T, in l0: List of T) //VERSION DEL PAPU
+    var q: pointer to (Node of T)
+    alloc (q)
+    if (not is_empty(l)) then 
+        q := l
+        do (q -> next != NULL)
+            q := q ->next
+        end
+    else l := l0
+    fi
+    q->next := l0
+
+end proc
+
+
+function index(in l1: List of T, n L nat) ret e : T
+var p : pointer to (Node of T)
+var pos : nat
+alloc(p)
+p := l1
+pos:=1
+if (length > n) then
+    do (pos<=n)
+        p := p->next
+        pos := pos + 1
+    od
+    e := p->elem
+fi
+end proc
+
+procedure take(in/out l: List of T, in n:nat) // VERSION DEL PAPU
+var p : pointer to (Node of T)
+var q : pointer to (Node of T)
+var pos : int
+alloc(q)
+alloc(p)
+p := L
+pos = 1
+do (pos <= n)  
+    if (p!=null) then
+        p:= p->next
+    fi
+od
+
+if (p!=null) then
+    q:= p
+    p:= p->next
+    q -> next := null
+fi
+
+do (p!= null) 
+    q:= p
+    p:= p->next
+    free(q)
+od
+end proc
+
+/* ////////////////////////////////////////////////////    PUNTO 3    /////////////////////////////////////////////*/
+proc take(in/out l: List of T, in n:nat)
+var p : pointer to (Node of T)
+var q : pointer to (Node of T)
+alloc(p)
+alloc(q)
+var pos : nat
+pos:=1
+p:=l
+do(pos<lenght(l))
+    q:=p
+    p:= p->next
+    if(pos>n) then
+        free(q)
+    fi
+od
+end proc
+
+proc drop(in/out l: List of T, in n:nat)
+var p : pointer to (Node of T)
+var q : pointer to (Node of T)
+alloc(p)
+alloc(q)
+var pos : nat
+pos:=1
+p:=le
+do(pos<lenght(l))
+    q:=p
+    p:= p->next
+    if(pos<n) then
+        free(q)
+    fi
+od
+end proc
+
+fun copylist (in/out l1: List of T, in l2 : List Of T) ret l2 : List of T
+var q : pointer to (Node of T)
+alloc(q)
+q := l1
+do (q -> next != null)
+    e: q-> elem 
+    addr(l2, e)
+    q:= q->next
+od
+if (q -> next = null) then
+    e:= q->elem
+    addr(l2, q)
+fi
+
+end fun
+/* ////////////////////////////////////////////////////    PUNTO 4    //////////////////// /////////////////////////*/
+spec marcador where 
+
+fun tanteador_inicial(in marcador: marcador) ret tanteador: Tanteador
+    /* { Devuelve el estado inicial del tablero osea 0-0} */
+proc puntoA(in/out marcador: marcador)
+    /* { Suma un punto al jugador A } */ 
+proc puntoB(in/out marcador: marcador)
+    /* { Suma un punto al jugador B } */
+
+/* Destroy*/
+proc destroyTablero(in/out marcador: marcador)
+    /* { Libera memorica en caso de ser necesario (Destruye el marcador) } */
+
+/* Operators */
+fun tanteadorEn0 (in marcador: marcador) ret b: bool
+    /* { Devuelve true si el tanteador es 0-0, false en caso contrario } */
+fun hayTantoA (in marcador: marcador) ret b: bool
+    /* { Devuelve true si el jugador A tiene al menos un tanto, false en caso contrario } */
+fun hayTantoB (in marcador: marcador) ret b: bool
+    /* { Devuelve true si el jugador B tiene al menos un tanto, false en caso contrario } */
+fun vaGanandoA (in marcador: marcador) ret b: bool
+    /* { Devuelve true si el jugador A va ganando, false en caso contrario } */
+fun vaGanandoB (in marcador: marcador) ret b: bool
+    /* { Devuelve true si el jugador B va ganando, false en caso contrario } */
+fun hayEmpate (in marcador: marcador) ret b: bool
+    /* { Devuelve true si el marcador esta igualado, false en caso contrario } */
+proc nuevosTantosA(in/out marcador: marcador, in n: nat)
+    /* { Suma n tantos al jugador A } */
+proc nuevosTantosB(in/out marcador: marcador, in n: nat)
+    /* { Suma n tantos al jugador B } */
+proc restaTantosA(in/out marcador: marcador, in n: nat)
+    /* { Resta n tantos al jugador A, si A tiene menos tantos que la cantidad n, queda en 0} */
+proc restaTantosB(in/out marcador: marcador, in n: nat)
+    /* { Resta n tantos al jugador B, si B tiene menos tantos que la cantidad n, queda en 0 } */
+
+end spec
+
+spec Counter where 
+/* Constructors */
+fun init() ret c: Counter
+    /* { Devuelve un contador inicializado en 0 } */
+proc incr (in/out c: Counter)
+    /* { Incrementa el contador en 1 } */
+proc decr (in/out c: Counter)
+    /* { Decrementa el contador en 1, si el contador es 0 no hace nada } */
+fun is_init (in c: Counter) ret b: bool
+    /* { Devuelve true si el contador es 0, false en caso contrario } */
+/* Destroy */
+proc destroy (in/out c: Counter)
+    /* { Libera memoria en caso de ser necesario (Destruye el contador) } */
+end spec
+
+implement marcador where 
+type marcador = tuple
+                    tantosA: Counter
+                    tantosB: Counter
+                end tuple
+end implement
+
+fun tanteador_inicial(in marcador: marcador) ret tanteador: Tanteador
+    tanteador.tantosA := 0
+    tanteador.tantosB := 0
+end fun
+
+proc puntoA(in/out marcador: marcador)
+    marcador.tantosA := marcador.tantosA + 1
+end proc
+
+proc puntoB(in/out marcador: marcador)
+    marcador.tantosB := marcador.tantosB + 1
+end proc
+
+/* Destroy*/
+
+proc destroyTablero(in/out marcador: marcador)
+    free(marcador)
+end proc
+
+/* Operators */
+
+fun tanteador_inicial(in marcador: marcador) ret tanteador: Tanteador
+    /* { Devuelve el estado inicial del tablero osea 0-0} */
+    tanteador.tantosA := init()
+    tanteador.tantosB := init()
+end fun 
+
+proc puntoA(in/out marcador: marcador)
+    /* { Suma un punto al jugador A } */ 
+    incr(marcador.tantosA)
+end proc
+
+proc puntoB(in/out marcador: marcador)
+    /* { Suma un punto al jugador B } */
+    incr(marcador.tantosB)
+end proc
+
+/* Destroy*/
+proc destroyTablero(in/out marcador: marcador)
+    /* { Libera memorica en caso de ser necesario (Destruye el marcador) } */
+    destroy(marcador.tantosA)
+    destroy(marcador.tantosB)
+    free(marcador)
+end proc
+
+/* Operators */
+
+fun tanteadorEn0(in marcador : marcador) ret b: bool
+    b:= (marcadorend.tantosA = 0) and (marcador.tantosB)
+end fun
+
+fun hayTantoA(in marcado:marcador) ret b: bool
+    b:= (marcador.tantosA > 0) 
+end fun
+
+fun hayTantoB(in marcador:marcador) ret b:bool
+    b:= (marcador.tantosB > 0)
+end fun
+
+fun vaGanandoA(in marcador:marcador) ret b: bool
+    b:= (marcador.tantosA > marcador.tantosB)
+end fun
+
+fun vaGanandoB(in marcador:marcador) ret b: bool
+    b:= (marcador.tantosB > marcador.tantosA)
+end fun
+
+fun hayEmpate(in marcador:marcador) ret b: bool
+    b:= (marcador.A = marcador.B)
+end fun
+
+proc nuevosTantosA(in/out marcador:marcador, in n : nat)
+    for i= 1 to n do
+        incr(marcador.tantosA)
+    od
+end proc
+
+proc nuevosTantosB(in/out marcador:marcador, in n : nat)
+    for i= 1 to n do
+        incr(marcador.tantosB)
+    od
+end proc
+
+proc restaTantosA(in/out marcador, in n:nat)
+    if(marcador.tantosA <= n) then 
+        init(marcador.A)
+    else
+        marcador.A = marcador.A - n
+    fi
+end proc
+
+proc restaTantosA(in/out marcador, in n:nat)
+    if(marcador.tantosB <= n) then 
+        init(marcador.B)
+    else
+        marcador.A = marcador.B - n
+    fi
+end proc
+/* ////////////////////////////////////////////////////    PUNTO 5    ////////////////////////////////////////////// */
+
+spec ConjuntoFinito of T where
+/* Constructors */
+
+fun vacio() ret c: ConjuntoFinito
+    /* { Devuelve un conjunto vacio } */
+proc agregar(in/out c: ConjuntoFinito, in e: T)
+    /* { Agrega un elemento al conjunto } */
+
+/* Destroy */
+proc destroConj(in/out c:ConjuntoFinito of T)
+    /* { Libera memoria en caso de ser necesario (Destruye el conjunto) } */
+T
+/* Operators */
+fun pertenece(in c: ConjuntoFinito of T, in e: ) ret b: bool
+    /* { Devuelve true si el elemento pertenece al conjunto, false en caso contrario } */
+fun esVacio (in c: ConjuntoFinito of T) ret b: bool
+    /* { Devuelve true si el conjunto es vacio, false en caso contrario } */
+proc unirConjuntos (in/out c1: ConjuntoFinito of T, in c2: ConjuntoFinito of T)
+    /* { Devuelve la union de los conjuntos } */
+proc interseccionConjuntos (in/out c1: T, in c2: ConjuntoFinito of T) 
+    /* { Devuelve la interseccion de los conjuntos } */
+proc diferenciaConjuntos (in/out c1: ConjuntoFinito of T, in c2: ConjuntoFinito of T)
+    /* { Devuelve la diferencia de los conjuntos } */
+end spec
+
+/* ////////////////////////////////////////////////////    PUNTO 6    ////////////////////////////////////////////// */
+
+implement ConjuntoFinito where
+type ConjuntoFinito of T = List of T
+end implement
+/* Constructores */
+
+fun vacio(in c: T) return c: T
+    c:= empty()
+end fun
+
+proc agregar(in/out c:T, in e:T)
+    addl(e,c)
+end proc 
+
+proc destroConj(in/out c)
+    destroy(c)
+end proc
+
+fun pertenece(in c:T, in e:T) return b :bool
+    b:= false
+    for i=1 to length(c) do
+        if(index(l,i) = e) then
+            b:= True
+        if
+    od
+end fun
+
+fun esVacio(in c:T) return b: bool
+    b:= is_empty(c)
+end fun
+
+proc unirConjuntos(in c:T, in c2:T)
+    concat(c1,c2)
+end proc
+
+proc interseccionConjuntos(in/out c1: T , in c2:T)
+var conjuntoAux : T
+conjuntoAux := empty()
+for j =1 to length(c2) do
+    for i to = lenght(c1) do
+        if(index(c1,i) = index(c2,j)) then
+            agregar(conjuntoAux, index(c1,i))
+        fi
+    od
+od
+c1 := empty()
+c1:= copylist(conjuntoAux)
+destroyConj(conjuntoAux)
+end proc
+
+/* ////////////////////////////////////////////////////    PUNTO 6    ////////////////////////////////////////////// */
