@@ -1,0 +1,61 @@
+spec Tree of T where
+
+/*  Constructors */
+
+fun empty_tree() ret t : Tree of T
+/* {- crea un arbol vacio -} */
+
+fun node (tl: Tree of T, e: T, tr: Tree of T) ret t : Tree of T
+/* {- crea el nodo con elemento e y subarboles tl y tr -} */
+
+/* Operations */
+
+fun is_empty (t: Tree of T) ret b : Bool
+/* {- determina si el arbol t es vacio -} */
+
+fun root (t: Tree of T) ret e : T
+/* {- devuelve el elemento de la raiz del arbol t -} */
+
+fun left_subtree (t: Tree of T) ret tl : Tree of T
+/* {- devuelve el subarbol izquierdo del arbol t -} */
+
+fun right_subtree (t: Tree of T) ret tr : Tree of T
+/* {- devuelve el subarbol derecho del arbol t -} */
+
+fun height (t: Tree of T) ret n : Nat
+/* {- devuelve la altura del arbol t -} */
+
+fun is_path (t: Tree of T, p: Path) ret b : Bool
+/* {- determina si p es un camino valido en el arbol t -} */
+
+fun subtree_alt (t: Tree of T, p: Path) ret st : Tree of T
+/* {- devuelve el subarbol que se encuentra al recorrer el camino p en t} */
+
+fun elem_alt (t: Tree of T, p: Path) ret e : T
+/* {- devuelve el elemento que se encuentra al recorrer el camino p en t} */
+/* {- PRE: is_path(t,p) -} */
+
+end spec
+
+implement Tree of T where
+
+type Node of T = tuple
+                    left : pointer to Node of T
+                    value: T
+                    right: pointer to Node of T
+                end tuple
+
+type Tree of T = pointer to Node of T
+
+/*  Constructors */
+
+fun empty_tree() ret t : Tree of T
+    t:= null;
+end fun
+
+fun node (tl: Tree of T, e: T, tr: Tree of T) ret t : Tree of T
+    t:= new Node of T;
+    t^.left:= tl;
+    t^.value:= e;
+    t^.right:= tr;
+end fun
