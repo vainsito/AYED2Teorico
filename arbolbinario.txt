@@ -1,3 +1,10 @@
+type Direction = enumerate
+                    left
+                    right
+                end enumerate
+
+type path = List of Direction
+
 spec Tree of T where
 
 /*  Constructors */
@@ -54,8 +61,70 @@ fun empty_tree() ret t : Tree of T
 end fun
 
 fun node (tl: Tree of T, e: T, tr: Tree of T) ret t : Tree of T
-    t:= new Node of T;
-    t^.left:= tl;
-    t^.value:= e;
-    t^.right:= tr;
+    alloc(t);
+    t->left:= tl;
+    t->value:= e;
+    t->right:= tr;
 end fun
+
+/* Operations */
+
+fun is_empty (t: Tree of T) ret b : Bool
+    b:= (t = null);
+end fun
+
+fun root(t: Tree of T) ret e: T
+    e := t->value;
+end fun
+
+fun left_subtree(t: Tree of T) ret tl: Tree of T
+    tl := t->left;
+end fun
+
+fun right_subtree(t: Tree of T) ret tr: Tree of T
+    tr := t->right;
+end fun
+
+fun height(t: Tree of T) ret n:Nat
+    if (is_empty(t)) then
+        n:= 0;
+    else
+        n:= 1 + max(height(t->left), height(t->right));
+end fun
+
+fun is_path(t: Treee of T, p: Path) ret b: Bool
+    b:= true;
+    if(is_empty(t) && !is_empty_list(p)) then
+        b:= false;
+    else
+        if(head(p) = left) then
+            b:= is_path(t->left, tail(p));
+        else if(head(p) = right) then
+            b:= is_path(t->right, tail(p));
+end fun
+
+fun subtree_alt(t: Tree of T, p: Path) ret st: Tree of T
+    if(is_empty_list(p)) then
+        st = t;
+    if (!is_path(t, p)) then
+        st = null;
+    else
+        if(head(p) = left) then
+            st:= subtree_alt(t->left, tail(p));
+        if(head(p) = right) then
+            st:= subtree_alt(t->right, tail(p));
+end fun
+
+fun elem_alt(t: Tree of T, p: Path) ret e: T
+    if(is_empty_list(p)) then
+        e = t->value;
+    if (!is_path(t, p)) then
+        e = null;
+    else
+        if(head(p) = left) then
+            e:= elem_alt(t->left, tail(p));
+        if(head(p) = right) then
+            e:= elem_alt(t->right, tail(p));
+end fun
+
+end implement
