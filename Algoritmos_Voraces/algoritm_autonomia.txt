@@ -1,0 +1,46 @@
+/*
+    Suponer que inicialmente el tanque de combustible se encuentra vac´ıo y que todas las estaciones de servicio
+    cuentan con suficiente combustible.
+
+    El criterio de seleccion es el de que la Autonomia(A) - Distancia(di) sea mayor a 0, ya que si es menor a 0
+    no se podra llegar a la siguiente estacion de combustible.
+
+    La estructura de datos en la cual representare el problema sera la siguiente:
+
+    type recorrido = Array of localidades
+    
+    typedef localidades of T = tuple
+                                    distancia : Nat
+                                    pueblo : String
+                                end tuple
+    typedef res of = tuple
+                        recorrido : Array of pueblo
+                        cant_cargas : Nat
+                    end tuple
+*/
+
+type recorrido = Array of localidades
+
+type localidades = tuple
+                                distancia : Nat
+                                pueblo : String
+                            end tuple
+
+type res = tuple
+                recorrido : Array of String
+                cant_cargas : Nat
+            end tuple
+/*  Algoritmo que calcule la menor cantidad de veces que es necesario cargar combustible para realizar el viaje de d0 hasta dn con sus
+    respectivas localizaciones donde se realizo la carga de combuistible las cuales son l0 hasta ln 
+*/
+
+fun menos_cargas_posibles(camino: recorrido, AUTONOMIA:Nat) ret data: res
+    data.cant_cargas := 1;                     /* Como parto con el tanque vacio cargo una vez en la localidad 0*/
+    data.recorrido[0] := camino[0].pueblo;     /* Guardo la localidad 0 ya que cargue combustible al partir*/
+    for i := 1 to size(camino) do               /* Empiezo el for en 1, ya que ya pase la localidad 0*//
+        if ((AUTONOMIA - camino[i].distancia) < 0 )then  /* Criterio del algoritmo */
+            data.cant_cargas := data.cant_cargas + 1;    /* Si no puedo llegar a la siguiente localidad cargo combustible*/
+            data.recorrido[data.cant_cargas] := camino[i].pueblo; /* Guardo la localidad donde cargue combustible*/
+        fi
+    od
+end fun
