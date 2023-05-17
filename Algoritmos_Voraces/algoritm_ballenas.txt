@@ -1,0 +1,53 @@
+/*
+
+    n ballenas, tiempos s1, s2, s3, ... sn que cada ballena es capaz de sobrevivir hasta que llegue el equipo de rescate.
+    Dar un algoritmo que determine el orden en que se debe rescatar a las ballenas para que el número de ballenas que mueran sea mínimo.
+    Asumiendo que llevar una ballena al mar toma tiempo constante t , que hay un unico equipo de rescate y que la ballena no muere mientras
+    esta siendo regresada al mar.
+    //// CRITERIO DE SELECCION /////
+    Seleccionar la ballena que muera mas rapido (menor tiempo de supervivencia): seleccionar  min(sj - t) con j: 1<=j<=n
+    //// CRITERIO DE FACTIBILIDAD /////
+    La ballena seleccionada debe ser rescatada antes de que muera.
+    //// CRITERIO DE OPTIMALIDAD /////
+    Seleccionar la ballena que muera mas rapido (menor tiempo de supervivencia): seleccionar  min(sj - t) con j: 1<=j<=n
+    si sj - t <= 0 entonces la ballena muere antes de que llegue el equipo de rescate, por lo tanto no se puede rescatar.
+    si sj - t > 0 entonces la ballena muere despues de que llegue el equipo de rescate, por lo tanto se puede rescatar.
+    //// ESTRUCTURA DE DATOS /////
+
+    type ballenas = Array of ballena
+    type ballena =  tuple
+                        tiempoSobrevivencia :nat
+                        idBallena : String
+                    end tuple
+    type res = List of idBallena    
+
+*/
+type ballenas = Array of ballena
+type ballena =  tuple
+                    tiempoSobrevivencia :nat
+                    idBallena : String
+                end tuple
+type res = Array of idBallena
+
+fun orden_de_salvacion(b: ballenas, t) ret array_ord : res 
+    arraux : ballenas               /* arreglo auxiliar para guardar las ballenas que sobreviven */
+    contador : nat                  /* contador para saber cuantas ballenas sobreviven */
+    contador := 0 
+/* recorremos el arreglo de ballenas para saber cuantas sobreviven */
+    for i = 1 to length(b) do        
+        if b[i].tiempoSobrevivencia - t > 0 then  /* si la ballena sobrevive la guardamos en el arreglo auxiliar  y aumentamos el contador*/
+            arraux[contador] := b[i]             
+            contador := contador + 1
+        fi
+    od
+/* ordenamos el arreglo auxiliar de ballenas por tiempo de sobrevivencia */
+    for i = 1 to length(arraux) do
+        min := arraux[1].tiempoSobrevivencia /* asumimos que el minimo es el primer elemento */
+        for j = 1 to length(arraux) do      /* recorremos el arreglo auxiliar para encontrar el minimo */
+            if arraux[j].tiempoSobrevivencia < min then  /* si encontramos un elemento menor al minimo lo guardamos */
+                min := arraux[j].tiempoSobrevivencia    /* y lo guardamos en la posicion i del arreglo auxiliar */
+            fi
+        od
+        list_ord[i] := min /* guardamos el minimo en la posicion i del arreglo de ballenas ordenadas */
+    od
+end fun
