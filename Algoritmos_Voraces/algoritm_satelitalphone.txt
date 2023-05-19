@@ -1,0 +1,79 @@
+/*
+
+    le prestas a n amigos tu telefono, cada amigo va a un lugar diferente y en algunos casos los periodos de viajes se superponen entre ellos.
+    por lo tanto es imposible prestarle el telefono a todos pero quisieras prestarselo al amyor numero de amigos posible.
+
+    pi dias de partida y ri dias de regreso de cada i-esimo amigo. tener en cuenta que cuando alguien lo devuelve recien a partir del dia siguiente
+    puede usarlo otro.
+
+    Suponiendo que conoces los dıas de partida y regreso (pi y ri respectivamente) de cada uno de tus amigos,
+    ¿cual es el criterio para determinar, en un momento dado, a quien conviene prestarle el equipo?
+
+    //// CRITERIO DE SELECCION //////
+    el criterio de seleccion seria que debo prestarle el telefono a aquel cuyo periodo de viaje sea mas corto, ya que asi podria prestarle el telefono.
+    osea que su dia de llegada menos el de partida sea mas chico, y  aquel que su dia de regreso sea mas cercano al dia de partida de otro amigo. para ello ordeno los dias de regreso de menor a mayor y luego
+    voy comparando con los dias de partida de los demas amigos. si el dia de regreso es menor ESTRICTO al dia de partida de otro amigo, entonces
+    puedo prestarle el telefono a ese amigo. Ya que puedo prestar el telefono al dia siguiente de que lo devuelva el otro amigo.
+
+    //// CRITERIO DE OPTIMALIDAD //////
+    seleccionar el amigo con periodo de viaje mas corto y que coincida con la partida de otro amigo.
+    si ri-pi < rj-pj entonces selecciono al amigo i, sino al amigo j.
+    si ri < pj entonces selecciono al amigo i, sino al amigo j.
+    si cumple las dos condiciones anteriores, entonces selecciono al amigo i, sino al amigo j.
+
+    //// ESTRUCTURA DE DATOS //////
+
+    typedef infoviaje = tuple
+                            partida : nat
+                            regreso : nat
+                        end tuple
+
+    typedef amigo = tuple
+                        info : infoviaj
+                        id : String
+                    end tuple
+    
+    typedef amigos = List of amigo
+
+    typedef res = list of id
+
+*/
+typedef infoviaje = tuple               
+                        partida : nat    // dia de partida
+                        regreso : nat   // dia de regreso
+                    end tuple
+
+typedef amigo = tuple
+                    info : infoviaje   // info del viaje
+                    id : String        // id del amigo
+                end tuple  
+        
+typedef amigos = List of amigo // Listas de amigos
+
+typedef res of List =   tuple
+                            amigo : amigo
+                            periodo : nat
+                        end tuple
+
+fun resuelve(list : amigos) ret l1 : res
+    l2 : res
+    l2 = empty() // lista de ids de amigos a los que se les puede prestar el telefono
+    l3 = copy_list(list) // copio la lista de amigos para no modificarla
+    for i = 1 to length(list) do    // for para calcular los periodos de viaje de cada amigo y agregarlos a la lista l2 de res 
+        periodo = head(l3).info.regreso - head(l3).info.partida  // periodo de viaje del amigo i
+        addr(l2, (head(l3), periodo))  // agrego el amigo i y su periodo de viaje a la lista l2
+        l3 = tail(l3)  // avanzo en la lista de amigos
+    end for
+    l2 = sort(l2) // ordeno la lista de res por periodo de viaje de menor a mayor
+    for i = 1 to length(l2) do  // for para recorrer la lista de res y ver a quien le puedo prestar el telefono
+        amigo = head(l2).amigo  // amigo i
+        for j = 1 to length(l2) do  // for para recorrer la lista de res y ver si el amigo i puede prestarle el telefono a otro amigo
+            amigo2 = head(l2).amigo  // amigo j
+            if amigo.info.regreso < amigo2.info.partida then  // si el amigo i puede prestarle el telefono al amigo j
+                addr(l1, amigo2)  // agrego el amigo j a la lista de res
+            end if
+        end for
+        l2 = tail(l2)  // avanzo en la lista de res
+    end for
+end fun
+
