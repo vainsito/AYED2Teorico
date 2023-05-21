@@ -1,0 +1,134 @@
+spec Set of T where
+/* CONSTRUCTORS */
+fun empty_set() ret s : Set of T
+/* {- Crea un conjunto vacío -} */ 
+proc add(in/out s : Set of T, in e : T)
+/* {- Agrega el elemento e al conjunto s -} */
+operations
+fun cardinal(s : Set of T) ret n : nat
+/* {- Devuelve la cantidad de elementos que tiene s -} */
+fun is_empty_set(s : Set of T) ret b : bool
+/* {- Devuelve True si s es vacío -} */
+fun member(e : T, s : Set of T) ret b : Bool
+/* {- Devuelve True si el elemento e pertenece al conjunto s -} */
+proc elim(in/out s : Set of T, in e : T)
+/* {- Elimina el elemento e del conjunto s, en caso que esté -} */
+proc union(in/out s : Set of T, in s0 : Set of T)
+/* {- Agrega a s todos los elementos de s0 -} */
+proc inters(in/out s : Set of T, in s0 : Set of T)
+/* {- Elimina de s todos los elementos que NO pertenezcan a s0 -} */
+proc dif(in/out s : Set of T, in s0 : Set of T)
+/* {- Elimina de s todos los elementos que pertenecen a s0 -} */
+fun get(in/out s : Set of T) ret e : T
+/* {- Obtiene algún elemento cualquiera del conjunto s -} */
+{- PRE: not is_empty_set(s) -}
+fun set_copy(s1 : Set of T) ret s2 : Set of T
+/* {- Copia el conjunto s1 -} */
+proc set_destroy(in/out s : Set of T)
+/* {- Libera memoria en caso que haya sido pedida -} */
+end spec
+
+/* {- IMPLEMENTACIÓN -} */
+implement Set of T where
+type Set of T = List of T
+
+/* {- CONSTRUCTORES -} */
+fun empty_set() ret s : Set of T
+    s := list_empty()
+end fun
+proc add(in/out s : Set of T, in e : T)
+    var n : nat
+    var saux : List of T
+    var is_member : bool
+    var d : T
+    n := 0
+    saux := list_copy(s)
+    is_member := false
+// {- encuentro el lugar donde va el elemento -}
+    do (not is_empty(saux) /\ not is_member)
+        d := head(saux)
+        if d = e then
+            is_member := true
+        else if d < e then
+            n := n+1
+        else if d > e then 
+            skip
+        fi
+        tail(saux)
+    od
+    if (not is_member) then 
+        list_add_at(s,n,e)
+    fi
+    list_destroy(saux)
+end proc
+
+fun cardinal(s : Set of T) ret n : nat
+// {- COMPLETAR -}
+end fun
+
+fun is_empty_set(s : Set of T) ret b : bool
+b := is_empty_list(s)
+end fun
+
+fun member(e : T, s : Set of T) ret b : bool
+    b:= false
+    for i=1 to length(c) do
+        if(index(l,i) = e) then
+            b:= True
+        if
+    od
+end fun
+
+proc elim(in/out s : Set of T, in e : T)
+// {- COMPLETAR -}
+end proc
+
+proc union(in/out s : Set of T, in s0 : Set of T)
+    var saux : List of T
+    var d : T
+    saux := list_copy(s0)
+    do (not is_empty_list(saux))
+        d := head(saux)
+        add(s,d)
+        tail(saux)
+    od
+    list_destroy(saux)
+end proc
+
+proc inters(in/out s : Set of T, in s0 : Set of T)
+    var conjuntoAux : T
+    conjuntoAux := empty()
+    for j =1 to length(c2) do
+        for i to = lenght(c1) do
+            if(index(c1,i) = index(c2,j)) then
+                agregar(conjuntoAux, index(c1,i))
+            fi
+        od
+    od
+    c1 := empty()
+    c1:= copylist(conjuntoAux)
+    destroyConj(conjuntoAux)
+end proc
+
+proc dif(in/out s : Set of T, in s0 : Set of T)
+    var saux : List of T
+    var d : T
+    saux := list_copy(s0)
+    do (not is_empty_list(saux))
+        d := head(saux)
+        if (member(d,s))
+        then elim(s,d)
+        fi
+        tail(saux)
+        od
+    list_destroy(saux)
+end proc
+
+// {- PRE: not is_empty_set(s) -}
+fun get(s : Set of T) ret e : T
+    e := head(s)
+end fun
+
+fun set_copy(s1 : Set of T) s2 : Set of T
+    s2 := list_copy(s1)
+end fun
