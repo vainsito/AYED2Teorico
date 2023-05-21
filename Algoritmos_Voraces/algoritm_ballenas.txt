@@ -1,0 +1,84 @@
+/*
+
+    n ballenas, tiempos s1, s2, s3, ... sn que cada ballena es capaz de sobrevivir hasta que llegue el equipo de rescate.
+    Dar un algoritmo que determine el orden en que se debe rescatar a las ballenas para que el número de ballenas que mueran sea mínimo.
+    Asumiendo que llevar una ballena al mar toma tiempo constante t , que hay un unico equipo de rescate y que la ballena no muere mientras
+    esta siendo regresada al mar.
+    //// CRITERIO DE SELECCION /////
+    Seleccionar la ballena que muera mas rapido (menor tiempo de supervivencia): seleccionar  min(sj - t) con j: 1<=j<=n
+    //// CRITERIO DE FACTIBILIDAD /////
+    La ballena seleccionada debe ser rescatada antes de que muera.
+    //// CRITERIO DE OPTIMALIDAD /////
+    Seleccionar la ballena que muera mas rapido (menor tiempo de supervivencia): seleccionar  min(sj - t) con j: 1<=j<=n
+    si sj - t <= 0 entonces la ballena muere antes de que llegue el equipo de rescate, por lo tanto no se puede rescatar.
+    si sj - t > 0 entonces la ballena muere despues de que llegue el equipo de rescate, por lo tanto se puede rescatar.
+    //// ESTRUCTURA DE DATOS /////
+
+type Ballena = tuple 
+			id: Nat
+			tiempoRestante: Nat
+		   end tuple
+*/
+type Ballena = tuple 
+			id: Nat
+			tiempoRestante: Nat
+		   end tuple
+
+fun salvarBallenas(B: Set of Ballena, t: Nat) ret rescatadas: List of Ballena
+    var ballenasAunVivas: Set of Ballena
+    var hora: Nat
+    var ballena: Ballena
+
+    hora:= 0
+    ballenasAunVivas:= set_copy(B)
+    rescatadas := empty_list()
+
+// {- Invariante: toda ballena en ballenasAunVivas está viva, es decir tiempoRestante >= hora, y NO está salvada, es decir no está en rescatadas -}
+    while not is_empty_set(ballenasAunVivas) do
+       // {- elijo la ballena candidata según criterio de selección -}
+        ballena := elegirBallena(ballenasAunVivas)
+       // {- agrego candidata elegida a la solución -}
+        addR(rescatadas, ballena)
+       // {- elimino la ballena rescatada de las aún vivas no rescatadas -}
+        elim_set(ballenasAunVivas, ballena)
+       // {- dado que salvé a una ballena, tengo que actualizar el reloj -}
+        hora := hora + t
+        quitarMuertas(ballenasAunVivas, hora)
+    od
+end fun
+
+// {- Idea: para cada elemento en el conjunto B, me fijo si tiempoRestante es menor a hora. En ese caso lo elimino de B -}
+proc quitarMuertas(in/out B: Set of Ballena, hora: Nat)
+    var D: Set of Ballena
+    var b: Ballena
+
+    D := copy_set(B)
+    while not is_empty_set(D) do
+       {- agarro una ballena del conjunto D -}
+       b := get(D)
+       if b.tiempoRestante < hora then
+           elim(B,b)
+       fi
+       elim(D,b)
+    end
+    destroy_set(D)
+end proc
+
+// {- elijo la ballena candidata según criterio de selección: la ballena con menor tiempo de vida. PRE: B es no vacío -}
+fun elegirBallena(B: Set of Ballena) ret b: Ballena
+    var b_aux : Ballena
+    var min_tiempo_restante : nat
+    var B_aux : Set of Ballena
+
+    min_tiempo_restante := infinito
+    B_aux := copy_set(B)
+    while not is_empty_set(B_aux) do
+        b_aux := get(B_aux)
+        if b_aux.tiempoRestante < min_tiempo_restante then
+            min_tiempo_restante := b_aux.tiempoRestante
+            b := b_aux
+        fi
+        elim_set(B_aux, b_aux)
+    od
+    destroy_set(B_aux)
+end fun
