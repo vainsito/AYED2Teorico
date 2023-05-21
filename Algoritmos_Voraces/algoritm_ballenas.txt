@@ -29,55 +29,48 @@ type ballena =  tuple
                 end tuple
 type res = Array of String
 
-fun orden_de_salvacion(b: ballenas, t) ret array_ord : res
-    arraux : ballenas               /* arreglo auxiliar para guardar las ballenas que sobreviven */
-    contador : nat                  /* contador para saber cuántas ballenas sobreviven */
-    min_pos : nat                   /* posición del mínimo elemento en arraux */
-    contador := 0
-    min_pos := -1                   /* inicializamos la posición del mínimo como -1 */
-    
-    /* recorremos el arreglo de ballenas para saber cuántas sobreviven y encontrar el mínimo */
-    for i = 1 to length(b) do
-        if b[i].tiempoSobrevivencia - t > 0 then  /* Si la ballena sobrevive, la guardamos en arraux */
-            arraux[contador] := b[i]  /* Guardamos la ballena en arraux */
-            contador := contador + 1
+fun orden_de_salvacion(b: ballenas, t) ret array_ord : res 
+    arraux : ballenas
+    contador : nat
+    contador := 0 
 
-            if min_pos = -1 or arraux[contador].tiempoSobrevivencia < arraux[min_pos].tiempoSobrevivencia then  /* Si el tiempo de supervivencia de la ballena actual es menor que el mínimo, actualizamos la posición del mínimo */
-                min_pos := contador  /* Actualizamos la posición del mínimo */
-            fi
+    for i = 1 to length(b) do   // Se agrega la condición de que la ballena debe sobrevivir al tiempo t
+        if b[i].tiempoSobrevivencia > t then  // Se cambia la condición de > 0 a > t
+            arraux[contador] := b[i]       // Se agrega la ballena al arreglo auxiliar
+            contador := contador + 1    
         fi
     od
-    
-    if min_pos = -1 then  /* Si no se puede rescatar ninguna ballena, devolvemos un arreglo vacío */
-        return new res[]   /* No se puede rescatar ninguna ballena, devolvemos un arreglo vacío */
-    else
-        array_ord := new res[contador]   /* Creamos el arreglo de ballenas ordenadas con tamaño contador */
-        tiempo_transcurrido := 0         /* Variable para almacenar el tiempo transcurrido */
-        
-        for i = 1 to contador do
-            array_ord[i] := arraux[min_pos].idBallena   /* Guardamos el id de la ballena mínima en cada posición */
-            tiempo_transcurrido := tiempo_transcurrido + t   /* Actualizamos el tiempo transcurrido */
-            
-            /* Actualizamos el tiempo de supervivencia de las ballenas restantes */
-            for j = 1 to contador do
-                if arraux[j].tiempoSobrevivencia - tiempo_transcurrido > 0 then  /* Si la ballena sobrevive, actualizamos su tiempo de supervivencia */
-                    arraux[j].tiempoSobrevivencia := arraux[j].tiempoSobrevivencia - tiempo_transcurrido  /* Actualizamos el tiempo de supervivencia */
-                else
-                    arraux[j].tiempoSobrevivencia := 0   /* Si el tiempo de supervivencia es negativo, lo establecemos como 0 */
-                fi
-            od
-            
-            min_pos := -1   /* Reiniciamos la posición del mínimo */
-            
-            /* Buscamos el nuevo mínimo */
-            for j = 1 to contador do
-                if arraux[j].tiempoSobrevivencia - t > 0 and (min_pos = -1 or arraux[j].tiempoSobrevivencia < arraux[min_pos].tiempoSobrevivencia) then  /* Si la ballena sobrevive y su tiempo de supervivencia es menor que el mínimo, actualizamos la posición del mínimo */
-                    min_pos := j
-                fi
-            od
+
+    for i = 1 to length(arraux) do   // Se agrega la condición de que la ballena debe sobrevivir al tiempo t
+        min := arraux[1].tiempoSobrevivencia    
+        for j = 1 to length(arraux) do     
+            if arraux[j].tiempoSobrevivencia < min then   
+                min := arraux[j].tiempoSobrevivencia     
+            fi
         od
-        
-        return array_ord
-    fi
+        array_ord[i] := min
+        arraux := eliminarBallena(arraux, min) // Se agrega la eliminación de la ballena del arreglo auxiliar
+    od
+
+    ret array_ord
+end fun
+
+/* 
+    Función auxiliar para eliminar la ballena del arreglo auxiliar
+*/
+
+fun eliminarBallena(b: ballenas, tiempo: nat) ret ballenas  
+    arr : ballenas
+    contador : nat
+    contador := 0
+
+    for i = 1 to length(b) do   
+        if b[i].tiempoSobrevivencia <> tiempo then  /* Se agrega la condición de que la ballena debe sobrevivir al tiempo t */
+            arr[contador] := b[i]
+            contador := contador + 1
+        fi
+    od
+
+    ret arr
 end fun
 
