@@ -7,7 +7,7 @@
     //// CRITERIO DE SELECCION /////
     Seleccionar la ballena que muera mas rapido (menor tiempo de supervivencia): seleccionar  min(sj - t) con j: 1<=j<=n
     //// CRITERIO DE FACTIBILIDAD /////
-    La ballena seleccionada debe ser rescatada antes de que muera.
+    La ballena seleccionada debe ser rescatada antes de que muera. y se tiene en cuenta que al salvar una ballena el tiempo cambia y se resta a la cantidad de tiempo de vida de cada ballena
     //// CRITERIO DE OPTIMALIDAD /////
     Seleccionar la ballena que muera mas rapido (menor tiempo de supervivencia): seleccionar  min(sj - t) con j: 1<=j<=n
     si sj - t <= 0 entonces la ballena muere antes de que llegue el equipo de rescate, por lo tanto no se puede rescatar.
@@ -31,38 +31,48 @@ type res = Array of String
 
 fun orden_de_salvacion(b: ballenas, t) ret array_ord : res
     arraux : ballenas               /* arreglo auxiliar para guardar las ballenas que sobreviven */
-    contador : nat                  /* contador para saber cuantas ballenas sobreviven */
+    contador : nat                  /* contador para saber cuántas ballenas sobreviven */
     min_pos : nat                   /* posición del mínimo elemento en arraux */
     contador := 0
     min_pos := -1                   /* inicializamos la posición del mínimo como -1 */
     
     /* recorremos el arreglo de ballenas para saber cuántas sobreviven y encontrar el mínimo */
     for i = 1 to length(b) do
-        if b[i].tiempoSobrevivencia - t > 0 then  /* Si la ballena sobrevive */
-            arraux[contador] := b[i]             /* Guardamos la ballena en el arreglo auxiliar */
+        if b[i].tiempoSobrevivencia - t > 0 then  /* Si la ballena sobrevive, la guardamos en arraux */
+            arraux[contador] := b[i]  /* Guardamos la ballena en arraux */
             contador := contador + 1
 
-            if min_pos = -1 or arraux[contador].tiempoSobrevivencia < arraux[min_pos].tiempoSobrevivencia then  /* Si el mínimo es -1 o el tiempo de sobrevivencia de la ballena actual es menor al mínimo */   
-                min_pos := contador  /* Guardamos la posición del mínimo */
+            if min_pos = -1 or arraux[contador].tiempoSobrevivencia < arraux[min_pos].tiempoSobrevivencia then  /* Si el tiempo de supervivencia de la ballena actual es menor que el mínimo, actualizamos la posición del mínimo */
+                min_pos := contador  /* Actualizamos la posición del mínimo */
             fi
         fi
     od
     
-    if min_pos = -1 then   /* Si el mínimo es -1, no se puede rescatar ninguna ballena */
+    if min_pos = -1 then  /* Si no se puede rescatar ninguna ballena, devolvemos un arreglo vacío */
         return new res[]   /* No se puede rescatar ninguna ballena, devolvemos un arreglo vacío */
     else
         array_ord := new res[contador]   /* Creamos el arreglo de ballenas ordenadas con tamaño contador */
+        tiempo_transcurrido := 0         /* Variable para almacenar el tiempo transcurrido */
         
         for i = 1 to contador do
             array_ord[i] := arraux[min_pos].idBallena   /* Guardamos el id de la ballena mínima en cada posición */
-            arraux[min_pos].tiempoSobrevivencia := infinity   /* Asignamos un valor infinito para evitar que se seleccione nuevamente */
+            tiempo_transcurrido := tiempo_transcurrido + t   /* Actualizamos el tiempo transcurrido */
+            
+            /* Actualizamos el tiempo de supervivencia de las ballenas restantes */
+            for j = 1 to contador do
+                if arraux[j].tiempoSobrevivencia - tiempo_transcurrido > 0 then  /* Si la ballena sobrevive, actualizamos su tiempo de supervivencia */
+                    arraux[j].tiempoSobrevivencia := arraux[j].tiempoSobrevivencia - tiempo_transcurrido  /* Actualizamos el tiempo de supervivencia */
+                else
+                    arraux[j].tiempoSobrevivencia := 0   /* Si el tiempo de supervivencia es negativo, lo establecemos como 0 */
+                fi
+            od
             
             min_pos := -1   /* Reiniciamos la posición del mínimo */
             
             /* Buscamos el nuevo mínimo */
             for j = 1 to contador do
-                if arraux[j].tiempoSobrevivencia - t > 0 and (min_pos = -1 or arraux[j].tiempoSobrevivencia < arraux[min_pos].tiempoSobrevivencia) then  /* Si la ballena sobrevive y el mínimo es -1 o el tiempo de sobrevivencia de la ballena actual es menor al mínimo */
-                    min_pos := j   /* Guardamos la posición del mínimo */
+                if arraux[j].tiempoSobrevivencia - t > 0 and (min_pos = -1 or arraux[j].tiempoSobrevivencia < arraux[min_pos].tiempoSobrevivencia) then  /* Si la ballena sobrevive y su tiempo de supervivencia es menor que el mínimo, actualizamos la posición del mínimo */
+                    min_pos := j
                 fi
             od
         od
@@ -70,3 +80,4 @@ fun orden_de_salvacion(b: ballenas, t) ret array_ord : res
         return array_ord
     fi
 end fun
+
