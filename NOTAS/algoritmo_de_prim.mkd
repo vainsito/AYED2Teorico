@@ -1,0 +1,48 @@
+# ARBOLES GENERADORES DE COSTO MINIMO
+
+- Sea G= (V,A) un grafo conexo no dirigido, con un costo no negativo asociado a cada arista.
+CONEXO = todos los vertices estan conectados con una arista
+NO DIRIGIDO = entre un  par de vertices tengo una arista entre ellos puedo ir en ambos sentidos
+TENGO costos por cada arista
+
+- Se dice quen un subconjunto T c A es un arbol generador si el grafo (V, T) formado por todos los vertices de G y las aristas del conjunto T es conexto y no tengo ciclos.
+
+- El costo de un arbol es la suma de los costos de sus aristas
+
+- Se busca T tal que su costo sea minimo
+
+El problema de encontrar un arbol generador de costo minimo tiene muchas aplicadciones en la vida real por ej: si se quiere unir distintas localidades de modo que requiera el menor costo en instalaciones de cables.
+
+No hay un unico arbol generador, puede haber varios y se basa en encontrar el camino que menor costo tenga al recorrer los vertices
+
+![](./images/2023-05-22-19-54-38.png)
+
+### ALGORITMO DE PRIM
+Es un algoritmo voraz , yo le digo desde que vertice se tiene que parti. 
+- Se parte de un vertice de origen y se va extendiendo el tendido a partir de ahi. 
+en cada paso es unir el tendido que yo ya tengo los nodos que ya he conectado con algun nodo que aun no he conectado, es voraz pq en cada paso selecciona un paso para aniadir a la soluccion y luego no lo verifica mas.
+
+- La de kruskal : Se divide el grafo en distintas componentes originariamente una por cada vertice y se van uniendo componentes.
+    en cada paso se selecciona la arista de menro costo capaz de unir componentes.
+#### Ejemplo de algoritmo de prim
+
+![](./images/2023-05-22-20-00-32.png)
+
+Supongamos que partimos del vertice 4:
+Lo primero que tenemos que hacer es analizar todas las aristas que parten de 4 y elegir la que tiene costo minimo. =>
+
+![](./images/2023-05-22-20-03-05.png)
+
+Ahora vuelvo a hacer lo mismo para cada vertice que tengo ahora y elegir la de minimo costo.
+
+![](2023-05-22-20-04-21.png)
+
+Y vuelvo a hacer lo mismo para finalmente llegar a tener todos los vertices conectado:
+
+![](./images/2023-05-22-20-04-56.png)
+
+IMPLEMENTACION DEL ALGORITMO DE PRIM 
+-
+![](./images/2023-05-22-20-05-53.png)
+
+![](./images/2023-05-22-20-06-12.png)

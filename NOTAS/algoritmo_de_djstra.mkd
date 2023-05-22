@@ -1,0 +1,70 @@
+ALGORITMO DE DJKSTRA
+=
+
+- Tenemos un grafo G dirigido con costos no negativos y partimos del grafo V
+
+queremos encontrar los costos de menor camino que va desde v hacia el resto de vertices
+
+djstra realiza n pasos donde n es el numero de vertices y en cadoa paso aporende el camino d emenor costo para ir del vertice v a un nuevo vertice.
+
+con azul marcamos el costo actual y luego analizamos cual es el costo de ir del vertice v al resto q estan conectados a ese y luego elije el que tiene menor costo.
+
+![](./images/2023-05-22-20-14-55.png)
+
+ahora desde 1 miro cuales me conecta con el resto y veo si el valor q tenia antes es mas chico que el que tenia antes para ir de v a 4 me costaba 4 pero ahora que estoy en 1 me costo 2 
+
+![](./images/2023-05-22-20-16-01.png)
+
+actualizo los valores con los valores mas chicos y vuelvo a agarrar el que tenga valor mas chico y lo pinto con azul. y vuelvo a actualizar el resto de vertices con el costo minimo
+
+![](./images/2023-05-22-20-16-47.png)
+
+vuelvo a elegir el q tiene el numero mas chico en este caso el 4 y pinto de azul y vuelvo a analizar hacia donde puedo ir y actualizo los costos minimos
+![](./images/2023-05-22-20-17-20.png)
+ahora como es el unico q me queda actualizo con costo minimo y pinto de asul
+
+### El agoritmo 
+
+asumiremos que el grafo viene dado por el conjunto de vertices V = {1,2,..,n}
+
+Y los costos por una una matriz L : array[1..n,1..n] of Nat
+
+es un arreglo bidimensional l[i,j] donde i y j representan 2 vertices y lo que contiene esa matriz en esa posicion es el costo de ir desde i hasta j. En caso de que no sea posible la matriz contendra infinito.
+
+asumimos que L[i,j] = 0.
+
+funciona para no dirigidos  L[i,j] = L[j,i] osea que como es no dirigido podemos ir de i a j y de j a i.
+
+
+Este algoritmo halla solo el costo de el camino de ir de v hasta cada uno de los demas vertices.
+
+el resultado estara dado por un arreglo D: array[1..n] of Nat
+
+en D[j] devolvera el costo del camino de costo minimo que va de v a j.
+
+el conjunto C es el conjunto de los vertices hacia los que todavia desconocemos el camino de menor costo
+
+definicion del algoritmo:
+
+![](./images/2023-05-22-20-27-55.png)
+
+este arreglo toma como argumento un arreglo bidimensional y un vertice v, y devuelve un arreglo que contiene en cada posicion cual es el costo de camino de costo minimo para ir de v a ese vertice.
+
+el algoritmo voraz voy a tener el conjunto c para el cual todavia no se cual es el ccm
+
+inicializo este conjunto con el conjunto de todos los vertices y luego elimiuno el vertice v pq ya se ese ccm
+
+luego en el otro for actualizo el resultado diciendo cual es el vosto para ir desde v hacia cada uno de los demas, si habia arista va a ser ese valor si no habia va a ser infinito
+
+
+luego en el do mientras todavia tenga vertices para ver
+
+en cada paso elijo el vertice q pertenece a c tal que el valor D[c] sea minimo, el conjunto c representa todos los pintados de blanco y el arreglo D los valoress que contiene
+
+y luego lo elimino
+
+en el siguiente for actualizo  todos los vertices que estaban pintados de blanco q pertenecen a c a ver si el valor que tenia antes es el minimo o si el valor que tengo ahora es el minimo que una el vertice con el otro
+
+en cada paso aprendo el ccm de cada vertice
+
+![](./images/2023-05-22-20-34-57.png)
