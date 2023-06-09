@@ -1,0 +1,22 @@
+/* 
+    Actividad: Modificar el algoritmo de el problema de la moneda, de manera que devuelva que monedas se utilizan
+    en vez de solo la cantidad de monedas.
+*/
+
+
+fun cambio(j: Nat, C : Set of Nat) ret S : Nat
+    var c, Nat
+    var C_aux : Set of Nat
+    if j == 0 then S := 0
+    else 
+        C_aux := set_copy(C)
+        c := get(C)
+        elim(C_aux, c)
+        if c <= j then
+            S := min(1+ cambio(j-c, C) , cambio(j, C_aux))
+        else
+            S := cambio(j, C_aux)
+        fi
+        set_destroy(C_aux)
+    fi
+end fun
