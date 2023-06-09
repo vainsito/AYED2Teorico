@@ -1,0 +1,181 @@
+### Forma general de los alg voraces:
+
+En que consisten los algoritmos voraces:
+
+Consisten en que para construir una solucion a un problema, lo que hago es tener un criterio de solucion unico
+para elegir un candidato y agregarlo a la solucion, y una vez que lo agrego, no lo vuelvo a revisar.
+
+No siempre se puede aplicar un algoritmo voraz, pero cuando se puede, es muy eficiente.
+
+```c
+    fun voraz(C: Set of "candidatos") ret S : "solucion a construir"
+        S = "solucion vacia"
+        while S "no es solucion" do
+            c = elegirCandidato(C) de c
+            eliminarCandidato(C, c)
+            if "agregar c a s es factible "then
+                agregarCandidato(S, c)
+            end if
+        end while
+end fun
+```
+
+* Ser factible es que no se rompa ninguna restriccion del problema.
+* La optimalidad va a depender del criterio de eleccion de candidatos.
+---
+# Backtracking 
+
+Que hacemos cuando no tenemos solucion voraz?
+
+Tenemos Backtracking, en que consiste:
+
+Consiste en que elijo el candidato pruebo por ese camino y quiza puedo "volver hacia atras" y probar otro camino.
+Los algoritmos con Backtracking intentan todas las posibilidades hasta encontrar la mejor solucion.
+Siempre que se tenga solucion, Backtracking la encuentra. Pero son muy costosos ya que prueban todas las posibilidades.
+
+- No hay buen criterio de seleccion : Se usa fuerza bruta.
+
+---
+## Problema de la moneda 
+
+- sea d1,d2,...,dn las denominaciones de las monedas
+
+- no se asume que esten ordenadas.
+
+- se dispone una cantidad infinita de cada moneda.
+
+- se debe pagar un monto k de manera exacta.
+
+- se quiere minimizar la cantidad de monedas a utilizar.
+
+- vimos que de la manera voraz puede no funcionar para ciertos conjuntos de monedas.
+
+- se puede resolver con backtracking utilizando un algoritmo recursivo que considere todas las combinaciones posibles de monedas.
+---
+### Codigo usando backtracking:
+
+```c
+fun cambio(j: Nat, C : Set of Nat) ret S : Nat
+    var c, Nat
+    var C_aux : Set of Nat
+    if j == 0 then S := 0
+    else 
+        C_aux := set_copy(C)
+        c := get(C)
+        elim(C_aux, c)
+        if c <= j then
+            S := min(1+ cambio(j-c, C) , cambio(j, C_aux))
+        else
+            S := cambio(j, C_aux)
+        end if
+        set_destroy(C_aux)
+    end if
+end fun
+```
+
+### Expliacion del codigo:
+
+- J es el monto que quiero pagar y un conjunto C de denominaciones
+- Voy a devolver la cantidad de monedas con la que voy a pagar ese monto
+
+- Si no tengo que pagar nada entonces la cantidad de monedas para pagar es 0
+
+- Si tengo que pagar pero tengo un conjunto de denominaciones es vacio, entonces no hay solucion.
+
+- El otro caso es cuando tengo que pagar y tengo un conjunto de denominaciones no vacio. Entonces tengo que elegir entre dos opciones:
+
+    - La primera es que agarro la primer denominacion del conjunto, la elimino y me fijo: si la moneda c es menor a lo que tengo que pagar, entonces me sirve y la utilizo. Entonces pruebo las dos opciones, pruebo el minimo entre cuanto me cuesta pagar con la moneda c y cuanto me cuesta pagar con el conjunto de denominaciones sin la moneda c.
+
+    - La segunda opcion es que si la moneda se pasa del monto que tengo que pagar, entonces no me sirvo y la debo eliminar del conjunto C. Entonces pruebo cuanto me cuesta pagar con el conjunto de denominaciones sin la moneda c.
+
+### Otra implementacion:
+
+```c
+fun cambio(d: Array [1..n] of ant, i,j : nat) ret r : nat
+    if j == 0 then
+        r:= 0
+    else if i == 0 then
+        r := infinito
+    else if d[i] > j then
+        r := cambio(d, i-1, j)
+    else
+        r := min(1 + cambio(d, i, j-d[i]), cambio(d, i-1, j))
+    end if
+end fun
+
+```
+
+### Explicacion de la otra implementacion:
+
+- D es un array de denominaciones, i es el indice de la denominacion hasta cual denominacion debo considerar y j es el monto que quiero pagar.
+
+- Si el monto que quiero pagar es 0, entonces la cantidad de monedas que necesito es 0.
+
+- Si el indice de la denominacion es 0, entonces no tengo denominaciones y no tengo solucion.
+
+- Si la denominacion es mayor al monto que quiero pagar, entonces no me sirve y la debo eliminar del array de denominaciones. Entonces pruebo cuanto me cuesta pagar con el array de denominaciones sin la denominacion d[i].
+
+- Si la denominacion es menor al monto que quiero pagar, entonces me sirve y la utilizo. Entonces pruebo las dos opciones, pruebo el minimo entre cuanto me cuesta pagar con la denominacion d[i] y cuanto me cuesta pagar con el array de denominaciones sin la denominacion d[i].
+
+--- 
+### Definicion matematica
+
+- cambio(i,j) = "menor numero de monedas necesarias para pagar exactamente el monto j con las denominaciones d1,...,di"
+
+
+
+![](./images/2023-06-08-14-07-24.png)
+
+- Si tengo que pagar 0 monto utilizo 0 monedas
+
+- Si tengo que pagar un monto mayor a 0 y no tengo denominaciones, entonces no tengo solucion, es infinito.
+
+- Si tengo que pagar un monto mayor a 0 y tengo denominaciones, pero la denominacion i-esima es mayor al monto que quiero pagar, entonces no me sirve y la debo eliminar del conjunto de denominaciones. Entonces pruebo cuanto me cuesta pagar con el conjunto de denominaciones sin la denominacion i-esima.
+
+-  Si tengo que pagar un monto mayor a 0 y tengo denominaciones, pero la denominacion i-esima es menor al monto que quiero pagar, entonces me sirve y la utilizo. Entonces pruebo las dos opciones, pruebo el minimo entre cuanto me cuesta pagar con la denominacion i-esima y cuanto me cuesta pagar con el conjunto de denominaciones sin la denominacion i-esima.
+
+---
+## Problema de la mochila
+
+- Tenemos una mochila de capacidad W
+
+- Tenemos n objetos, NO FRACCIONABLES de valor v1,v2,...,vn y peso w1,w2,...,wn.
+
+- Se quiere encontrar la mejor seleccion de objetos que quepan en la mochila.
+
+- Por mejor seleccion se entiende aquella que totalice el mayor valor posible sin que se supere la capacidad de la mochila.
+
+##### Simplificamos el problema:
+
+- Solo nos interesa por ahora hallar el mayor valor posible sin exceder la capacidad de la mochila.
+
+- No nos interesa saber cuales son los objetos que alcanzan ese maximo.
+
+Al igual que el problema de la moneda tenemos una funcion recursiva m(i,j) en donde el parametro i represaenta el indice del objeto hasta el cual considerar y j es la capacidad restante de la mochila.
+
+
+![](./images/2023-06-08-14-31-51.png)
+
+
+##### Explicacion del problema
+
+- Si la capacidad de la mochila es 0, entonces no puedo poner ningun objeto y el valor es 0.
+
+- Si la capacidad de la mochila es mayor a 0 y no tengo objetos, entonces no puedo poner ningun objeto y el valor es 0.
+
+- Si la capacidad de la mochila es mayor a 0 y tengo objetos, pero el objeto i-esimo no entra en la mochila, entonces no me sirve y lo debo eliminar de la lista de objetos. Entonces pruebo cuanto vale la mochila con la lista de objetos sin el objeto i-esimo.
+
+- Si la capacidad de la mochila es mayor a 0, la cantidad de objetos es mayor a 0 y el valor del objeto i-esimo es menor o igual a la capacidad de la mochila entonces me sirve y lo utilizo. Entonces pruebo las dos opciones, pruebo el maximo entre cuanto vale la mochila con el objeto i-esimo y cuanto vale la mochila con la lista de objetos sin el objeto i-esimo.
+
+---
+### Problema del camino de costo minimo
+
+- Tenemos un grafo dirigido G = (V, A).
+
+- Cada arista tiene un costo asociado no negativo.
+
+- Queremos encontrar el camino de menor costo que une a cada par de vertices.
+
+- Se asume que V = {1,2,...,n}.
+
+##### Simplificamos el problema
