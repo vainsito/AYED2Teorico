@@ -1,0 +1,9 @@
+/*
+
+    Para cada uno de los siguientes ejercicios:
+        • Identifique que parametros debe tomar la funcion recursiva que resuelve el problema.
+        • Describa con palabras que calcula la misma, en funcion de sus argumentos.
+        • Defina la funcion recursiva en notacion matematica y opcionalmente en codigo.
+        • Indique cual es la llamada principal que obtiene el resultado pedido en el ejercicio.
+
+*/

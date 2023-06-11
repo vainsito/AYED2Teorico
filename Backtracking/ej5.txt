@@ -1,0 +1,26 @@
+/*
+    Ej 5 : 
+
+    Sus amigos quedaron encantados con el telefono satelital, para las proximas vacaciones ofrecen
+    pagarle un alquiler por el. Ademas del dıa de partida y de regreso (pi y ri) cada amigo ofrece un
+    monto m_i por dia. Determinar el maximo valor alcanzable alquilando el telefono.
+
+    Datos:
+    dia de partida : pi
+    dia de regreso : ri
+    monto por dia : m_i
+
+    Que debo calcular? : El maximo valor posible alquilando el telefono
+
+    Argumentos de la funcion:
+    el dia en donde empiezo a alquilar el telefono : x
+    Set de amigo: donde cada amigo esta formado por un pi,ri y m_i
+
+    Solucion:
+
+    Caso 1 = si el dia en el que empiezo a alquilar el telefono es despues de todos los dias de regreso de mis amigos entonces mi valor es 0
+    
+    0 si x > pi para todo i
+    
+    Caso 2 = 
+*/

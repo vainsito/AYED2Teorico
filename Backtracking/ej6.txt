@@ -1,0 +1,59 @@
+/*  
+    Backtracking Ej 6
+
+    Un artesano utiliza materia prima de dos tipos: A y B. Dispone de una cantidad MA y MB de
+    cada una de ellas. Tiene a su vez pedidos de fabricar n productos p1, . . . , pn (uno de cada uno).
+    Cada uno de ellos tiene un valor de venta v1, . . . , vn y requiere para su elaboracion cantidades
+    a1, . . . , an de materia prima de tipo A y b1, . . . , bn de materia prima de tipo B. ¿Cual es el mayor
+    valor alcanzable con las cantidades de materia prima disponible?
+
+    Datos:
+
+    Tipos de materia prima: A y B
+
+    Cantidad de materia prima: MA y MB
+
+    Productos: p1, . . . , pn (uno de cada uno)
+
+    Valor de venta: v1, . . . , vn
+
+    por producto requiere cantidades A : a1, . . . , an y de B : b1, . . . , bn
+
+    Objetivo : Alcanzar el valor maximo con las cantidades de materia prima disponibles
+
+    Solucion :
+
+    Caso 1:  No tengo materia prima osea A = 0 y B = 0
+        - Retorno 0
+    Caso 2 : Tengo materia prima osea A y B > 0 pero no tengo pedidos
+        - Retorno 0
+    Caso 3 : Tengo materia prima y pedidos
+        - Si la cantidad de materia prima es menor a la cantidad de materia prima que requiere el producto
+            - Paso al siguiente producto
+        - Si la cantidad de materia prima es mayor a la cantidad de materia prima que requiere el producto
+            - Retorno el valor minimo de del producto + la llamada recursiva con la cantidad de materia prima restante y el siguiente producto y
+                la llamada recursiva sin el producto actual
+    Argumentos de la funcion:
+        Cantidad de materia prima A, B y un arreglo de productos
+    Para obtener el resultado llamo a la funcion con (MA, MB, cant productos)
+*/
+
+producto = tuple
+                matA : Nat
+                matB : Nat
+                valor : Nat
+            end tuple
+
+fun max_value( P : aray[1..n] of producto, MA, MB : Nat) ret maxvalue : Nat
+    if (MA == 0 ^^ MB == 0) then
+            maxvalue = 0
+    else if ( MA > 0 ^^ MB > 0 ^^ n == 0) then
+            maxvalue = 0
+    else
+        if (MA < P[i].matA ^^ MB < P[i].matB) then
+            maxvalue = max_value(P[n-1], MA, MB)
+        else
+            maxvalue = min(P[i].valor + max_value(P[1..n], MA - P[i].matA, MB - P[i].matB), max_value(P[n-1], MA, MB))
+        fi
+    fi
+end fun

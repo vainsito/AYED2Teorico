@@ -3,20 +3,70 @@
     en vez de solo la cantidad de monedas.
 */
 
-
-fun cambio(j: Nat, C : Set of Nat) ret S : Nat
+// Codigo original que devuelve la cantidad de monedas que utilizo
+fun cambio(j : Nat, C: Set of Nat) ret S : Nat
     var c, Nat
     var C_aux : Set of Nat
-    if j == 0 then S := 0
+    if j = 0 then 
+        S := 0
+    else if is_empty(C) then 
+        S := ∞
     else 
-        C_aux := set_copy(C)
+        C_aux:= set_copy(C)
         c := get(C)
-        elim(C_aux, c)
-        if c <= j then
-            S := min(1+ cambio(j-c, C) , cambio(j, C_aux))
-        else
-            S := cambio(j, C_aux)
+        elim(C_aux,c)
+        if (c ≤ j) then 
+            S := min(1+cambio(j-c,C),cambio(j,C_aux))
+        else 
+            S := cambio(j,C_aux)
         fi
         set_destroy(C_aux)
     fi
 end fun
+
+// Codigoque devuelve las monedas que utilizo
+/* 
+
+    Que quiero que haga mi nueva funcion:
+    Objetivo principal : Devolver las monedas que utilizo
+    En que consistira mi funcion:
+    - Hay 4 casos posibles
+        - Si no tengo que pagar nada : Devuelvo un conjunto vacio, porque no tengo que pagar nada entonces no uso monedas.
+        - Si tengo que pagar algo pero no tengo monedas : Devuelvo infinito porque no puedo pagar. o podria aniadir el infinito al conjunto de monedas que utilizo.
+        -* SI tengo que pagar algo y tengo monedas: Pueden pasar mas casos dentro de este:
+            - Si la primera moneda es mayor que lo que tengo que pagar : Devuelvo el conjunto de monedas que utilizo sin la primera moneda.
+            - Si la primera moneda es menor o igual a lo que tengo que pagar : Tengo que ver si me conviene utilizar esa moneda o no.
+                - Si me conviene utilizar esa moneda : Devuelvo el conjunto de monedas que utilizo con la primera moneda.
+                - Si no me conviene utilizar esa moneda : Devuelvo el conjunto de monedas que utilizo sin la primera moneda.
+                - Como veo si me conviene o no? 
+                    - Si me conviene : Debo calcular el minimo entre utilizar esa moneda y no utilizarla.
+                    - Si no me conviene : Debo calcular el minimo entre utilizar la siguiente moneda y no utilizarla.
+
+*/
+
+
+fun cambio_pro(j : Nat, C: Set of Nat) ret S : Set of Nat
+    var c, Nat
+    var C_aux : Set of Nat
+    if j = 0 then 
+        S := set_empty()
+    else if is_empty(C) then 
+        S := set_add(S,∞)
+    else 
+        C_aux:= set_copy(C)
+        c := get(C)
+        elim(C_aux,c)
+        if (c ≤ j) then 
+            if (1+cambio_pro(j-c,C) < cambio_pro(j,C_aux)) then
+                S := set_add(cambio_pro(j-c,C),c)
+            else
+                S := cambio_pro(j,C_aux)
+            fi
+        else 
+            S := cambio_pro(j,C_aux)
+        fi
+        set_destroy(C_aux)
+    fi
+end fun
+
+/* Creo que solo es necesaria hacer la funcion matematica xd * /

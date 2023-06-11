@@ -1,0 +1,9 @@
+/*
+
+    En el problema de la mochila se buscaba el m´aximo valor alcanzable al seleccionar entre n objetos
+de valores v1, . . . , vn y pesos w1, . . . , wn, respectivamente, una combinaci´on de ellos que quepa en
+una mochila de capacidad W. Si se tienen dos mochilas con capacidades W1 y W2, ¿cu´al es el valor
+m´aximo alcanzable al seleccionar objetos para cargar en ambas mochilas?
+
+
+*/

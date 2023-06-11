@@ -1,0 +1,62 @@
+/*
+    BACKTRACKING EJ 3:
+
+    Usted se encuentra en un globo aerostatico sobrevolando el oceano cuando descubre que empieza a
+    perder altura porque la lona esta levemente danada. Tiene consigo n objetos cuyos pesos p1, . . . , pn
+    y valores v1, . . . , vn conoce. Si se desprende de al menos P kilogramos lograra recuperar altura y
+    llegar a tierra firme, y afortunadamente la suma de los pesos de los objetos supera holgadamente P. 
+    ¿Cual es el menor valor total de los objetos que necesita arrojar para llegar sano y salvo a la
+    costa?    
+
+    Datos: 
+        - n: cantidad de objetos
+        - P: peso minimo que debo tirar para recuperar altura y llegar a tierra firme
+        - p_n: pesos de los objetos
+        - v_n: valores de los objetos
+        - La suma de los pesos de los objetos supera justo a P
+
+    Que debo calcular = cual es el menor valor total de los objetos que tengo que tirar.
+
+    Ejemplo: 
+        - n = 3
+        - P = 5
+        - p_n = [p1, p2, p3, p4, p5]
+        - v_n = [1, 2, 3, 4, 7]
+
+        - La suma de los pesos de los objetos supera justo a P
+
+        - El menor valor total de los objetos que tengo que tirar es 5 (p1 + p2 + p3)
+
+    Solucion:
+        La idea es ir probando todas las combinaciones posibles de objetos que puedo tirar, y quedarme con la que tenga menor valor total.
+
+    -- Caso 1  si P es == 0 => devuelvo 0 ya que no tengo que tirar nada
+
+    -- Caso 2 si P es > 0 pero n es == 0 => devuelvo infinito ya que no tengo objetos para tirar
+
+    -- Caso 3 si P > 0 y n > 0 => 
+        - Si el peso del objeto n es > P => 
+            - No puedo tirar el objeto n, entonces pruebo con el objeto n-1
+        - Si el peso del objeto n es <= P => 
+            - Pruebo tirando el objeto n y el objeto n-1
+            - Pruebo tirando solo el objeto n-1
+*/
+
+type Objeto = tuple
+    peso: Nat,
+    valor: Nat
+end tuple
+
+function min_valor(Objetos: array[1..n]of Objeto, P: Nat) ret valormin : Nat
+    if P == 0 then
+        valormin = 0
+    else if n == 0 then
+        valormin = Infinito
+    else
+        if Objetos[n].peso > P then
+            valormin = min_valor(Objetos[n-1], P)
+        else
+            valormin = min(min_valor(Objetos, P - Objetos[n].peso) + Objetos[n].valor, min_valor(Objetos[n-1], P))
+        end if
+    end if
+end function

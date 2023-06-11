@@ -1,0 +1,45 @@
+/* 
+
+    Una panaderıa recibe n pedidos por importes m1, . . . , mn, pero solo queda en deposito una cantidad
+    H de harina en buen estado. Sabiendo que los pedidos requieren una cantidad h1, . . . , hn de harina
+    (respectivamente), determinar el maximo importe que es posible obtener con la harina disponible.
+
+
+    Lo que quiero obtener con esta funcion es el maximo importe que puedo obtener con la harina disponible, osea por ejemplo tengo una cantidad de
+    harina 15 y por ejemplo tengo un pedido de 10 tiras de pan que cuesta en total 5 pesos, y utiliza 5 de harina, despues criollos,20 pesos, 10 de harina
+    y facturas  30 pesos 7 de harina , entonces lo que quiero obtener es el maximo importe que puedo obtener con la harina disponible, 
+
+    Como es backtracking entonces debo probar todas las combinaciones posibles y elegir la que me de un mayor importe con la harina disponible.
+
+    EJ de combinaciones:
+
+    1) 10 tiras de pan, Criollos = lo cual seria de importe 25 pesos y uso 15kg de harina.
+
+    2) 10 tiras de pan, Facturas = lo cual seria de importe 35 pesos y uso 12kg de harina. // Esta es la mejor pq me da un mayor importe con la harina disponible
+
+    3) Criollos, Facturas = lo cual seria de importe 50 pesos y uso 17kg de harina. // Esta opcion no puede ser ya que me paso de la cantidad de kilos
+
+*/
+
+type pedido =   tuple
+                    imp : Nat
+                    harina : Nat
+                end tuple
+
+fun max_importe(kgHar: Nat, Pedidos : Set of pedido) ret max_imp : Nat
+    var auxPedido : pedido
+    var C_aux : Set of Nat
+    if (kgHar == 0) || (is_empty(Pedidos)) then 
+        max_imp := 0
+    else 
+        C_aux := set_copy(C)
+        auxPedido := get(C)
+        elim(C_aux, auxPedido)
+        if auxPedido.harina <= kgHar then
+            S := max(auxPedido.imp + cambio(kgHar-auxPedido.harina, Pedidos) , cambio(j, C_aux))
+        else
+            S := max_importe(kgHar, C_aux)
+        end if
+        set_destroy(C_aux)
+    end if
+end fun
