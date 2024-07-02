@@ -1,0 +1,111 @@
+spec Multiset of T where
+
+// Constructores
+
+fun empty_multiset() ret mset : Multiset of T
+ // Crea un multiset vacio
+
+proc add_mset(in/out mset : Multiset of T, elem : T)
+    // Agrega un elemento al multiset, si ya existe incrementa las ocurrencias
+
+// Operadores
+fun is_empty_mset(mset : Multiset of T) ret b : bool
+    // Devuelve true si el multiset esta vacio
+
+fun exist_elem_mset(mset : Multiset of T, elem : T) ret b : bool
+    // Devuelve true si el elemento esta en el multiset
+    <Pre : not is_empty_mset(mset)>
+fun cant_ocurr(mset : Multiset of T, elem : T) ret n : nat
+    // Devuelve la cantidad de ocurrencias de un elemento en el multiset
+    <Pre : exist_elem_mset(mset, elem)>
+
+proc elim_ocurr(in/out mset : Multiset of T, elem : T)
+    // Elimina 1 ocurrencia del elemento en el multiset, si solo hay 1 lo elimina
+    <Pre : exist_elem_mset(mset, elem)>
+
+// Destructores
+proc destroy_mset(in/out mset : Multiset of T)
+    // Destruye el multiset
+
+implements Multiset of T Where
+
+type Elem of T = tuple
+                    elem : T
+                    ocurr : nat
+                end tuple
+type Multiset of T = List of (Elem of T)
+
+// Como el multiset tiene de representacion
+fun empty_multiset() ret mset : Multiset of T
+    mset = empty_list()
+end fun
+
+proc add_mset(in/out mset : Multiset of T, e : T)
+    // Si el elemento ya existe en el multiset incrementa las ocurrencias
+    if exist_elem_mset(mset, elem) then
+        while head(mset)->elem != e do
+            mset = tail(mset)
+        end while
+        head(mset)->ocurr = head(mset)->ocurr + 1 // Si sale del while es porque encontro el elemento
+    fi
+    else
+        var e : Elem of T
+        e->elem = elem
+        e->ocurr = 1
+        addr(mset, e) // Agrega el elemento al final de la lista
+    fi
+end proc
+
+fun is_empty_mset(mset : Multiset of T) ret b : bool
+    b = is_empty_list(mset)
+end fun
+
+fun exist_elem_mset(mset : Multiset of T, elem : T) ret b : bool
+    b = false
+    if not is_empty_mset(mset) then // Chequea si el multiset esta vacio
+        while not is_empty_list(mset) and not b do // Recorre la lista hasta encontrar el elemento o llegar al final
+            if head(mset)->elem = elem then // Chequeo si el elemento es igual al que busco
+                b = true
+            fi
+            mset = tail(mset) // Si no es el elemento que busco avanzo a la siguiente posicion
+        end while
+    fi
+end fun
+
+fun cant_ocurr(mset : Multiset of T, elem : T) ret n : nat
+    n = 0
+    while not is_empty_list(mset) do
+        if head(mset)->elem = elem then
+            n = head(mset)->ocurr
+        fi
+        mset = tail(mset)
+    end while
+end fun
+
+<Pre : exist_elem_mset(mset, e)>
+proc elim_ocurr(in/out mset : Multiset of T, e : T)  
+    // Si solo hay 1 ocurrencia del elemento lo elimina, sino decrementa las ocurrencias
+    var aux : Multiset of T // Lista auxiliar para guardar los elementos que no son el que quiero eliminar
+    while head(mset)->elem != e do
+        addr(aux, head(mset))
+        mset = tail(mset)
+    od
+    // Si salgo del while es porque encontre el elemento
+    if head(mset)->ocurr = 1 then
+        mset = tail(mset) // elimiuno el elemento
+    else
+        head(mset)->ocurr = head(mset)->ocurr - 1
+    fi
+    // Ahora concateno la lista auxiliar con la lista original para no perder los elementos
+    mset = concat(aux, mset)
+end proc
+
+// Funcion que agrega todos los elementos pares de un array a un multiset
+fun arr_to_mset(arr[1..n] : Array of T) ret mset : Multiset of T
+    mset = empty_multiset()
+    for i = 1 to n do
+        if arr[i] mod 2 = 0 then
+            add_mset(mset, arr[i])
+        fi
+    od
+end fun

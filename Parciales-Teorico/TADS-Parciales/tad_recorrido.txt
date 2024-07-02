@@ -1,0 +1,196 @@
+// Debo hacer un TAD que se llama Recorrido, que es una lista de Indicaciones, donde el tipo Indicacion
+// es un enum de 3 valores: DERECHA, IZQUIERDA, RECTO.
+
+// Primero especifico el TAD Indicacion, con sus constructores, operaciones y destructores.
+
+// Constructor
+fun emptyRecorrido() ret seq : Recorrido
+    // {- Crea un recorrido Vacio -}
+
+proc addIndicacion(in/out seq : Recorrido , ind : Indicacion)
+    // {- Agrega una indicacion al recorrido -}
+
+// Operadores de Actualizacion
+
+proc actualizarRecto(in/out seq : Recorrido) ret seq : Recorrido
+    // {- Actualiza las indicaciones si se sigue recto -}
+
+proc actualizarDerecha(in/out seq : Recorrido) ret seq : Recorrido
+    // {- Actualiza las indicaciones si se dobla a la derecha -}
+
+proc actualizarIzquierda(in/out seq : Recorrido) ret seq : Recorrido
+    // {- Actualiza las indicaciones si se dobla a la izquierda -}
+
+// Operadores de Consulta
+
+fun is_Left(in seq : Recorrido) ret b : Bool
+    // {- Devuelve True si la proxima indicacion es Izquierda -}
+
+fun is_Right(in seq : Recorrido) ret b : Bool
+    // {- Devuelve True si la proxima indicacion es Derecha -}
+
+fun is_Straight(in seq : Recorrido) ret b : Bool
+    // {- Devuelve True si la proxima indicacion es Recto -}
+
+fun is_Destino(in seq : Recorrido) ret b : Bool
+    // {- Devuelve True si se llego al destino osea si el recorrido esta vacio -}
+
+fun longitud(in seq : Recorrido) ret n : Nat
+    // {- Devuelve la distancia del recorrido en metros -}
+
+proc eliminarIndicacion(in/out seq : Recorrido) ret seq : Recorrido
+    // {- Elimina la primer indicacion de la lista -}
+
+// Destructor
+
+proc destroyRecorrido(in/out seq : Recorrido)
+    // {- Destruye el recorrido -}
+
+
+// Ahora implemento el TAD Recorrido
+
+implement Recorrido where
+
+type Recorrido = List of Indicacion
+
+type Indicacion  =  enumerate
+                        Izquierda 
+                        Derecha
+                        Recto 
+                    end enumerate
+
+// Constructores
+
+fun emptyRecorrido() ret seq : Recorrido
+    seq := empty() // Creo una lista vacia
+end fun 
+
+proc addrIndicacion(in/out seq : Recorrido, ind : Indicacion)
+    addr(seq, ind) // Agrego una indicacion al final de la lista
+end proc
+
+proc addlIndicacion(in/out seq : Recorrido, ind : Indicacion)
+    addl(seq, ind) // Agrego una indicacion al comienzo de la lista
+end proc
+// Operaciones de Actualizacion
+
+// Actualiza las indicaciones si se sigue recto
+// Suponemos que las calles son de doble mano, y se puede doblar, tambien suponemos que son manzanas cuadradas
+proc actualizarRecto(in/out seq : Recorrido) ret seq : Recorrido
+    if not is_empty(seq) then
+        if head(seq) = =Recto then
+            seq := tail(seq) // Elimino la primer indicacion
+        fi
+        else if head(seq) == Derecha then // Si teniamos que doblar a la derecha y seguimos recto, entonces tenemos q hacer izq - izq - recto
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Recto)
+        fi
+        else if head(seq) == Izquierda then // Si teniamos que doblar a la izquierda y seguimos recto, entonces tenemos q hacer der - der - recto
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Recto)         
+        fi
+    fi
+end proc
+
+// Actualiza las indicaciones si se dobla a la derecha
+proc actualizarDerecha(in/out seq : Recorrido) ret seq : Recorrido
+    if not is_empty(seq) then
+        if head(seq) == Derecha then
+            seq := tail(seq) // Elimino la primer indicacion
+        fi
+        else if head(seq) == Recto then // Si teniamos que seguir recto y doblamos a la derecha, entonces tenemos q hacer izq - izq - recto
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Recto)
+        fi
+        else if head(seq) == Izquierda then // Si teniamos que doblar a la izquierda y doblamos a la derecha, entonces tenemos q hacer der-der-der-izq
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Izquierda)
+        fi
+    fi
+end proc
+
+// Actualiza las indicaciones si se dobla a la izquierda
+proc actualizarIzquierda(in/out seq : Recorrido) ret seq : Recorrido
+    if not is_empty(seq) then
+        if head(seq) == Izquierda then
+            seq := tail(seq) // Elimino la primer indicacion
+        fi
+        else if head(seq) == Recto then // Si teniamos que seguir recto y doblamos a la izquierda, entonces tenemos q hacer der - der - recto
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Derecha)
+            addlIndicacion(seq, Recto)
+        fi
+        else if head(seq) == Derecha then // Si teniamos que doblar a la derecha y doblamos a la izquierda, entonces tenemos q hacer izq-izq-izq-der
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Izquierda)
+            addlIndicacion(seq, Derecha)
+        fi
+    fi
+end proc
+
+// Operadores de Consulta
+fun is_Left(in seq : Recorrido) ret b : Bool
+    b := False
+    if not is_empty(seq) then
+        b := head(seq) == Izquierda
+    fi
+end fun
+
+fun is_Right(in seq : Recorrido) ret b : Bool
+    b := False
+    if not is_empty(seq) then
+        b := head(seq) == Derecha
+    fi
+end fun
+
+fun is_Straight(in seq : Recorrido) ret b : Bool
+    b := False
+    if not is_empty(seq) then
+        b := head(seq) == Recto
+    fi
+end fun
+
+fun is_Destino(in seq : Recorrido) ret b : Bool
+    b := is_empty(seq)
+end fun
+
+// Suponemos que cada cuadra tiene 100 metros, entonces la longitud del recorrido es 100 * cantidad de indicaciones
+fun longitud(in seq : Recorrido) ret n : Nat
+    n := 0
+    if not is_empty(seq) then
+        n := 100 * length(seq)
+    fi
+end fun
+
+// Elimina la primer indicacion de la lista
+proc eliminarIndicacion(in/out seq : Recorrido) ret seq : Recorrido
+    if not is_empty(seq) then
+        seq := tail(seq)
+    fi
+end proc
+
+// Destructor
+// Tenemos que destruir la lista
+proc destroyRecorrido(in/out seq : Recorrido)
+    destroy(seq)
+end proc
+
+
+// Punto c: implementar una funcion que dado un recorrido, devuelve un nat que cuenta la cantidad de veces que se dobla a la izquierda
+
+fun cantIzquierdas(in seq : Recorrido) ret n : Nat
+    n := 0
+    if not is_empty(seq) then
+        if head(seq) == Izquierda then
+            n := 1 + cantIzquierdas(eliminarIndicacion(seq))
+        else
+            n := cantIzquierdas(eliminarIndicacion(seq))
+        fi
+    fi
+end fun

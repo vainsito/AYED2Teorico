@@ -1,0 +1,30 @@
+spec
+proc lshift(in/out l : List)
+ // {- Ejecuta una rotacion circular a la izquierda de los elementos en la lista -}
+
+implement
+type Node = tuple
+                value : elem
+                next : Pointer to Node
+            end tuple
+type List = pointer to Node
+
+// La idea es que el ultimo elemento de la lista pase a ser el primero, y el resto de elementos se desplacen hacia la derecha
+// Ejemplo: si la lista es [1,2,3,4,5], luego de la rotacion debe quedar [5,1,2,3,4]
+// Para esto, primero recorro la lista hasta llegar al ultimo elemento, y luego hago que el ultimo elemento apunte al primer elemento
+// y el penultimo elemento apunte a NULL. Luego, el primer elemento pasa a ser el segundo, el segundo pasa a ser el tercero, y asi sucesivamente
+proc lshift(in/out l : List)
+    ultimo : pointer to Node
+    penultimo : pointer to Node
+    alloc(last)
+    alloc(aux)
+    penultimo := l
+    ultimo->next := l
+    // Recorro la lista hasta llegar al penultimo elemento
+    do (penultimo->next->next != NULL){
+        penultimo := penultimo->next
+    }
+    od
+    penultimo->next := NULL
+
+end proc
