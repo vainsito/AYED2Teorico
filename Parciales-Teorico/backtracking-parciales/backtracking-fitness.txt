@@ -1,0 +1,45 @@
+// Backtracking que es del ejercio 3 del final 2022 - 28 - 07
+// Explicacion de variables:
+    // b : Arreglo que contiene la energia que me consume cada ejercicio en los brazos
+    // z : Arreglo que contiene la energia que me consume cada ejercicio en la zona media
+    // p : Arreglo que contiene la energia que me consume cada ejercicio en las piernas
+    // valor : Arreglo que contiene el valor de cada ejercicio
+    // n : Cantidad de ejercicios
+    // brazos_esf : Energia que tengo en los brazos
+    // zonam_esf : Energia que tengo en la zona media
+    // piernas_esf : Energia que tengo en las piernas
+fun maxpt_gym(n : Nat, brazos_esf : Nat, zonam_esf : Nat, piernas_esf : Nat, 
+                b : Array[1..n] of Nat, z : Array[1..n] of Nat, 
+                p : Array[1..n] of Nat, valor[1..n] : Array of Nat) ret solucion : Nat
+
+    var puntaje : array[0..n, 0..brazos_esf, 0..zonam_esf, 0..piernas_esf] of Nat
+
+    // Caso bases base:
+        // No tengo ejercicios para hacer
+    for i = 0 to brazos_esf do
+        for j = 0 to zonam_esf do
+            for k = 0 to piernas_esf do
+                puntaje[0, i, j, k] = 0 // No tengo ejercicios para hacer
+            od
+        od
+    od
+    // Tengo ejercicios para hacer, pero no tengo energia en brazos ni zona media ni piernas = 0
+    for i = 1 to n do
+        puntaje[i, 0, 0, 0] = -inf
+    od
+    // Caso en donde alguna energia no me alcanza para hacer el ejercicio, entonces no lo hago y sigo con el siguiente
+    for i = 1 to n do
+        for j = 0 to brazos_esf do
+            for k = 0 to zonam_esf do
+                for l = 0 to piernas_esf do
+                    if j < b[i] or k < z[i] or l < p[i] then
+                        puntaje[i, j, k, l] = puntaje[i-1, j, k, l]
+                    else
+                        puntaje[i, j, k, l] = max(puntaje[i-1, j, k, l], puntaje[i-1, j-b[i], k-z[i], l-p[i]] + valor[i])
+                    fi
+                od
+            od
+        od
+    od
+    solucion = puntaje[n, brazos_esf, zonam_esf, piernas_esf]
+end fun

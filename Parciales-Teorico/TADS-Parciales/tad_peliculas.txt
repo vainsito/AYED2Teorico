@@ -1,0 +1,65 @@
+// tengo n peliculas, cada pelicula tiene una hora de comienzo c_i y una hora de finalizacion f_i.
+// El objetivo es maximizar la cantidad de peliculas que puedo ver, teniendo en cuenta que no puedo ver dos peliculas
+// Al mismo tiempo. Ni tampoco puedo ver una pelicula que comience antes de que termine otra.
+
+// Entonces mi criterio de seleccion es elegir las peliculas que duren menos tiempo y que comiencen lo mas cerca posible
+
+// Tad con el que trabajo:
+
+type Pelicula = Tuple
+                    comienzo : Nat
+                    finalizacion : Nat
+                End Tuple
+type Peliculas = Set of Pelicula
+type Solucion = List of Pelicula // Lista de peliculas que puedo ver, ordenadas por cual veo primero
+
+// Funcion principal
+// Asumo que las horas son nat y comienza en 0
+fun max_pelis(p_set : Peliculas) ret sol : Solucion
+    var pelis_aux : Peliculas
+    var peli : Pelicula
+    var hora_actual : Nat
+    hora_actual = 0
+    pelis_aux = copy_set(p_set)
+    // Creo un ciclo para iterar sobre p_set
+    while not is_empty_set(pelis_aux) and hora_actual < HORA_MAX do // HORA_MAX = 2359
+        peli = elegir_peli(pelis_aux, hora_actual)
+        addr(sol, peli)
+        delete_set(p_set, peli)
+        hora_actual = peli->finalizacion
+        delete_pelis(pelis_aux, hora_actual) // Elimino las peliculas que no puedo ver, osea q empiezan antes de la hora_actual
+    end while
+    destroy_set(pelis_aux)
+end fun
+
+// Funciones auxiliares
+// Funcion que elige la pelicula que termina mas cerca de la hora_actual
+fun elegir_peli(pelis_aux : Peliculas, hora_actual : Nat) ret peli : Pelicula
+    var peli_aux : Pelicula
+    var min_duracion : Nat
+    var min_comienzo : Nat
+    min_duracion = inf
+    while not is_empty_set(pelis_aux) do
+        peli_aux = get(pelis_aux)
+        if (peli_aux->comienzo >= hora_actual) and (peli_aux->duracion < min_duracion) then // Critero de seleccion 
+            min_duracion = peli_aux->duracion
+            min_comienzo = peli_aux->comienzo
+            peli = peli_aux
+        fi
+        delete_set(pelis_aux, peli_aux)
+    end while
+end fun
+
+// Funcion que elimina del set las peliculas que no puedo ver, osea que comienzan antes de la hora_actual
+proc delete_pelis(in/out pelis: Peliculas, hora_actual : Nat)
+    var peli : Pelicula
+    var pelis_aux : Peliculas // Set auxiliar para iterar sobre el
+    pelis_aux = copy_set(pelis)
+    while not is_empty_set(pelis_aux) do
+        peli = get(pelis_aux)
+        if peli->comienzo < hora_actual then
+            delete_set(pelis, peli_aux) // Elimino la pelicula que no puedo ver
+        fi
+        delete_set(pelis_aux, peli) // Avanzo al siguiente elemento
+    end while
+end proc

@@ -1,0 +1,57 @@
+// Tengo que elegir k sabores de helado y al menos M de ellos deben ser al agua.
+// Cada sabor de helado tiene un puntaje : Nat y un Bool que indica si es al agua o no.
+// El objetivo es maximizar el puntaje total de los k helados, teniendo en cuenta que al menos M de ellos deben ser al agua.
+
+// Tad con el que trabajo:
+
+type Sabor = tuple
+                puntaje : nat
+                agua : bool
+            end tuple
+// Funcion que maximiza el puntaje total de los healdos elegidos con las restricciones dadas
+<Pre: length(sabores) >= K and M <= K>
+fun max_pt(sabores : Set of Sabor, M : Nat, K: Nat) ret max_points : Nat
+    var cant_agua : Nat
+    var cant_elegidos : Nat
+    var sabor_aux : Sabor
+    cant_elegidos = 0
+    copy_sabores = copy_set(sabores)
+    while cant_elegidos < K do
+        // Primero elijo los sabores al agua
+        if cant_agua < M then
+            sabor_aux = max_sabor_general(copy_sabores, true)
+            cant_agua = cant_agua + 1
+            delete(copy_sabores, sabor_aux) // elimino el sabor elegido del set
+        else
+            sabor_aux = max_sabor_general(copy_sabores, false)
+            delete(copy_sabores, sabor_aux) // elimino el sabor elegido del set
+        fi
+        cant_elegidos = cant_elegidos + 1
+    end while
+
+// Funcion auxiliar que devuelve el sabor con mayor puntaje, opcionalmente filtrando por sabores al agua
+fun max_sabor_general(sabores : Set of Sabor, solo_agua : Bool) ret sabor : Sabor
+    var max_puntaje : Nat
+    var sabor_aux : Sabor
+    max_puntaje = 0
+    while not is_empty_set(sabores) do
+        sabor_aux = choose(sabores)
+        if (not solo_agua or (solo_agua and sabor_aux->agua)) and (sabor_aux->puntaje > max_puntaje) then
+            max_puntaje = sabor_aux->puntaje
+            sabor = sabor_aux
+        fi
+        delete(sabores, sabor_aux)
+    end while
+end fun
+
+// Ahora debo hacer backtracking y dar la funcion matematica que maximiza el puntaje total de los helados elegidos, pero tambien teniendo en cuenta
+// Que ahora tenemos una cantidad de Calorias C 
+
+maxpt_fit = "Esta funcion calcula el puntaje maximo que se puede obtener eligiendo K sabores, con al menos M de ellos al agua y que cada sabor no supere las calorias C."
+
+El resultado se obtiene llamando a la funcion maxpt_fit(sabores, M, K, C)
+
+maxpt_fit(i, m, k, c) = | 0 si k = 0 ^ m = 0
+                        | -inf si i =0 ^ k > 0 v m > 0
+                        | max(maxpt_fit(i-1, m-1, k-1, c) + puntaje(i), maxpt_fit(i-1, m, k, c)) si i > 0 ^ k > 0 ^ m > 0 ^ c >= c_i
+                        | maxpt_fit(i-1, m, k, c) si i > 0 ^ k > 0 ^ m > 0 ^ c < c_i

@@ -1,0 +1,50 @@
+// Implementar el tad cola utilizando punteros, en donde todas las operaciones sean de orden constante.
+
+Implements Queue of T where
+
+type Node of T = tuple
+                    elem : T
+                    next : Pointer to (Node of T)
+                end tuple
+
+type Queue of T = tuple
+                    front : Pointer to (Node of T) // Puntero al primer elemento
+                    back : Pointer to (Node of T) // Puntero al ultimo elemento 
+                end tuple
+
+fun empty_queue() ret q : Queue of T
+    alloc(q)
+    q->front = null
+    q->back = null
+end fun
+
+proc enqueue( q: Queue of T, elem : T)
+    var new_node : Pointer to (Node of T)
+    alloc(new_node)
+    new_node->elem = elem
+    new_node->next = null
+    if not is_empty_queue(q) then // Si la cola no esta vacia 
+        q->back->next = new_node // El siguiente del ultimo nodo apunta al nuevo nodo que encolamos
+        q->back = new_node // El ultimo nodo ahora pasa a ser el nodo que encolamos
+    else // Si la cola esta vacia
+        q->front = new_node // El primer nodo es el nodo que encolamos
+        q->back = new_node // El ultimo nodo es el nodo que encolamos, ya que es el unico nodo
+    fi
+end proc
+
+// Operadores
+
+fun is_empty( q: Queue of T) ret b : bool
+    b = q->front = null
+end fun
+
+fun first( q: Queue of T) ret elem : T
+    elem = q->front->elem
+end fun
+
+proc dequeue( q: Queue of T)
+    var aux : Pointer to (Node of T)
+    aux = q->front
+    q->front = q->front->next
+    free(aux)
+end proc
